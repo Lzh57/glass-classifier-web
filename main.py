@@ -1,12 +1,16 @@
 from flask import Flask, request, jsonify, render_template
 from tensorflow.keras.models import load_model
 from tensorflow.keras.applications.efficientnet import preprocess_input
+from flask_cors import CORS
 import numpy as np
 import cv2
 from PIL import Image
 import io
 import base64
 import os
+
+app = Flask(__name__)
+CORS(app)
 
 app = Flask(__name__)
 model = load_model("best_model.keras")
