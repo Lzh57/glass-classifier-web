@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, render_template
 from tensorflow.keras.models import load_model
 from tensorflow.keras.applications.efficientnet import preprocess_input
 import numpy as np
@@ -6,14 +6,15 @@ import cv2
 from PIL import Image
 import io
 import base64
+import os
 
 app = Flask(__name__)
 model = load_model("best_model.keras")
 class_names = ["Glass", "Plastic"]
 
-@app.route("/")
-def home():
-    return "AI 分類模型已啟動！"
+@app.route("/", methods=["GET"])
+def index():
+    return render_template("index.html")
 
 @app.route("/predict", methods=["POST"])
 def predict():

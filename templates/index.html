@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <title>AI 垃圾分類器</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; text-align: center; }
+        input[type="file"], button { margin: 10px; }
+        #preview { margin-top: 20px; max-width: 300px; }
+    </style>
+</head>
+<body>
+    <h1>AI 垃圾分類器</h1>
+    <input type="file" accept="image/*" capture="environment" id="fileInput">
+    <br>
+    <button onclick="uploadImage()">開始辨識</button>
+    <div>
+        <img id="preview" src="" alt="預覽圖片">
+        <p id="result"></p>
+    </div>
+
+    <script>
+        const fileInput = document.getElementById('fileInput');
+        const preview = document.getElementById('preview');
+        const result = document.getElementById('result');
+
+        fileInput.addEventListener('change', function () {
+            const file = fileInput.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = e => preview.src = e.target.result;
+                reader.readAsDataURL(file);
+            }
+        });
+
+        function uploadImage() {
+            const file = fileInput.files[0];
+            if (!file) {
+                alert("請先選擇圖片");
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append("image", file);
+
+            fetch("/predict", {
+                method: "POST",
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    result.textContent = `錯誤：${data.error}`;
+                } else {
+                    result.textContent = `結果：${data.label}（信心度：${(data.confidence * 100).toFixed(1)}%）`;
+                }
+            })
+            .catch(error => {
+                console.error("Error:", error);
+                result.textContent = "無法連接後端服務。";
+            });
+        }
+    </script>
+</body>
+</html>
