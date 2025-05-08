@@ -1,0 +1,10 @@
+services:
+  - type: web
+    name: glass-classifier-api
+    env: python
+    buildCommand: pip install -r requirements.txt  # 安裝所需的套件
+    startCommand: gunicorn main:app                # 啟動 Flask 應用程式
+    envVars:
+      - key: FLASK_ENV
+        value: production
+    autoDeploy: true
